@@ -5,6 +5,7 @@ import id.ak.mytaskmanager.domain.usecase.GetAllTaskStatus
 import id.ak.mytaskmanager.domain.usecase.GetCompletedTask
 import id.ak.mytaskmanager.domain.usecase.GetPendingTask
 import id.ak.mytaskmanager.ui_common.base.BaseViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
 
 @HiltViewModel
@@ -14,6 +15,6 @@ class HomeViewModel @Inject constructor(
     getCompletedTaskUseCase: GetCompletedTask
 ) : BaseViewModel() {
     val taskStatus = getAllTaskStatusUseCase.data
-    val pendingTask = getPendingTaskUseCase.data
-    val completedTask = getCompletedTaskUseCase.data
+    val pendingTask = getPendingTaskUseCase.data.distinctUntilChanged()
+    val completedTask = getCompletedTaskUseCase.data.distinctUntilChanged()
 }

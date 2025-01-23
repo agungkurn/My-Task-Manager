@@ -40,9 +40,16 @@ class DefaultTaskRepository @Inject constructor(
         return converted
     }
 
-    override suspend fun createTask(taskEntity: TaskEntity) {
-        val converted = taskEntityToDtoMapper.map(taskEntity)
-        taskDao.createTask(converted)
+    override suspend fun createTask(title: String, description: String?, statusId: Int) {
+        taskDao.createTask(
+            Task(
+                title = title,
+                description = description,
+                statusId = statusId,
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
+            )
+        )
     }
 
     override suspend fun updateTask(taskEntity: TaskEntity) {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">New Task</string>
+    <string name="create_title_label">Title</string>
+    <string name="create_description_label">Description (optional)</string>
+    <string name="create_status_label">Task status</string>
+    <string name="title_status_placeholder">Select status</string>
+</resources>
