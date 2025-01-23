@@ -9,6 +9,7 @@ import id.ak.mytaskmanager.data.room_entity.TaskStatusDtoToEntityMapper
 import id.ak.mytaskmanager.domain.entity.TaskEntity
 import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
 import id.ak.mytaskmanager.domain.repository.TaskRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -34,10 +35,10 @@ class DefaultTaskRepository @Inject constructor(
             }
         }
 
-    override suspend fun getTaskById(id: Int): TaskEntity {
-        val result = taskDao.getTaskById(id)
-        val converted = taskDtoToEntityMapper.map(result)
-        return converted
+    override fun getTaskById(id: Int): Flow<TaskEntity> {
+        return taskDao.getTaskById(id).map {
+            taskDtoToEntityMapper.map(it)
+        }
     }
 
     override suspend fun createTask(title: String, description: String?, statusId: Int) {

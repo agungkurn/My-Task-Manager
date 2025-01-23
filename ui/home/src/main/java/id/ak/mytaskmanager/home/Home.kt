@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(
+internal fun Home(
     openCreateTask: () -> Unit,
     openTaskDetails: (TaskEntity) -> Unit,
     modifier: Modifier = Modifier

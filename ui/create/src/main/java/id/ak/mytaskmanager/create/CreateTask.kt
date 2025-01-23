@@ -45,7 +45,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTask(onSaved: () -> Unit, onNavigateUp: () -> Unit, modifier: Modifier = Modifier) {
+internal fun CreateTask(
+    onSaved: () -> Unit,
+    onNavigateUp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel = viewModel<CreateTaskViewModel>()
     val taskStatus by viewModel.taskStatus.collectAsStateWithLifecycle(listOf())
 
