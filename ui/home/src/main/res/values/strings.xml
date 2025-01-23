@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">My Task Manager</string>
+    <string name="home_empty_task">"No task with status %1$s</string>
+</resources>

@@ -1,0 +1,95 @@
+/.idea/assetWizardSettings.xml
+/build
+/captures
+.cxx
+
+# Kotlin/Java specific
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle files
+local.properties
+*.bat
+.gradle-cache/
+*.kts.bak
+
+# Android-specific
+.idea/
+*.apk
+*.ap_
+*.dex
+*.so
+*.o
+*.obj
+*.out
+*.hprof
+captures/
+output.json
+crashlytics-build.properties
+*.log
+
+# Signing keys
+*.jks
+*.keystore
+*.pem
+
+# Generated files
+gen/
+bin/
+target/
+coverage/
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navigation.xml
+*.iml
+.gradle/
+
+# Test outputs
+test-results/
+coverage/
+*.ec
+
+# Proguard and Android Studio Logs
+proguard/
+*.orig
+*.cfg
+*.log
+
+# NDK-specific
+obj/
+.externalNativeBuild/
+
+# Jetpack Compose
+compose-previews/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+.idea/misc.xml
+*.swp
+*.swo
+
+# Build output
+*.aab
+*.zip
+*.tar
+*.tgz
+*.gz
+/buildSrc/build
+
+# Other local files
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.env
+
+# Node.js dependencies (if any)
+node_modules/
+
+# Firebase
+google-services.json
+android/app/google-services.json
