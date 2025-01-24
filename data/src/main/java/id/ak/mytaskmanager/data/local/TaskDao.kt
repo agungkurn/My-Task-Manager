@@ -18,7 +18,8 @@ interface TaskDao {
                 "FROM Task AS t " +
                 "INNER JOIN TaskStatus AS s " +
                 "ON t.statusId = s.id " +
-                "WHERE t.statusId IN (:statusIds)"
+                "WHERE t.statusId IN (:statusIds)" +
+                "ORDER BY t.updatedAt DESC"
     )
     fun getAllTasks(statusIds: List<Int>): Flow<List<TaskDetails>>
 

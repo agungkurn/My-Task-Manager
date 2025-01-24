@@ -1,5 +1,6 @@
 package id.ak.mytaskmanager.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -18,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -90,6 +92,11 @@ internal fun Home(
                     FilterChip(
                         selected = selected,
                         label = { Text(text = it.name) },
+                        leadingIcon = {
+                            AnimatedVisibility(visible = selected) {
+                                Icon(Icons.Default.Check, contentDescription = it.name)
+                            }
+                        },
                         onClick = {
                             viewModel.setStatus(it)
                         }
