@@ -6,7 +6,6 @@ import id.ak.mytaskmanager.data.room_entity.TaskDetailsDtoToEntityMapper
 import id.ak.mytaskmanager.data.room_entity.TaskStatus
 import id.ak.mytaskmanager.data.room_entity.TaskStatusDtoToEntityMapper
 import id.ak.mytaskmanager.domain.entity.TaskDetailsEntity
-import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
 import id.ak.mytaskmanager.domain.repository.TaskRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,15 +16,14 @@ class DefaultTaskRepository @Inject constructor(
     private val taskStatusDtoToEntityMapper: TaskStatusDtoToEntityMapper,
     private val taskDetailsDtoToEntityMapper: TaskDetailsDtoToEntityMapper
 ) : TaskRepository {
-    override val status = taskDao.getAllStatus()
-        .map<List<TaskStatus>, List<TaskStatusEntity>> {
-            if (it.isNotEmpty()) {
-                taskStatusDtoToEntityMapper.map(it)
-            } else {
-                taskDao.populateStatus(*TaskStatus.getStatus())
-                listOf()
-            }
+    override val status = taskDao.getAllStatus().map {
+        if (it.isNotEmpty()) {
+            taskStatusDtoToEntityMapper.map(it)
+        } else {
+            taskDao.populateStatus(*TaskStatus.getStatus())
+            listOf()
         }
+    }
 
     override fun getTasks(statusId: List<Int>): Flow<List<TaskDetailsEntity>> {
         return taskDao.getAllTasks(statusId).map {

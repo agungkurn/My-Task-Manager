@@ -3,20 +3,21 @@ agp = "8.8.0"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
+androidxJunit = "1.2.1"
 espressoCore = "3.6.1"
 lifecycle = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2025.01.00"
 hilt = "2.55"
 multidex = "2.0.1"
-coroutines = "1.9.0"
+coroutines = "1.10.1"
 coil = "3.0.4"
 room = "2.6.1"
 ksp = "2.1.0-1.0.29"
 javax = "1"
-appcompat = "1.7.0"
-material = "1.12.0"
+mockK = "1.13.16"
+androidxRunner = "1.6.2"
+androidXTestRules = "1.6.1"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -24,10 +25,13 @@ javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "j
 gradle-tools = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 gradle-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "agp" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 compose-compiler-plugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxRunner" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidXTestRules" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
@@ -49,13 +53,15 @@ coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", versio
 coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 room = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-test = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 ksp-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockK" }
+mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockK" }
 
 [bundles]
 coil = ["coil-compose", "coil-gif", "coil-okhttp"]
 compose = ["androidx-material3", "androidx-ui-tooling"]
+mockk = ["mockk-android", "mockk-agent"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -65,4 +71,3 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-library = { id = "kotlin-library" }
 ui-library = { id = "ui-library" }
 common-android-library = { id = "common-android-library" }
-android-library = { id = "com.android.library", version.ref = "agp" }

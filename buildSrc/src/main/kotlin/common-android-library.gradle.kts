@@ -1,8 +1,6 @@
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.JavaVersion
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.plugins
 import org.gradle.kotlin.dsl.the
 
 plugins {
@@ -60,4 +58,9 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    testImplementation(libs.bundles.mockk)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

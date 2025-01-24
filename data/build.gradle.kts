@@ -10,4 +10,5 @@ dependencies {
     implementation(projects.domain)
     implementation(libs.room)
     ksp(libs.room.compiler)
+    androidTestImplementation(libs.room.test)
 }
