@@ -5,8 +5,7 @@ import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
 import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
-    val status: Flow<List<TaskStatusEntity>>
-
+    suspend fun getStatus(): List<TaskStatusEntity>
     fun getTasks(statusId: List<Int>): Flow<List<TaskDetailsEntity>>
     fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity?>
     suspend fun getTaskById(id: Int): TaskDetailsEntity?

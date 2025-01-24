@@ -48,15 +48,14 @@ internal fun ViewTask(
     val viewModel = viewModel<ViewTaskViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val task by viewModel.task.collectAsStateWithLifecycle(null)
-    val taskStatus by viewModel.statusOptions.collectAsStateWithLifecycle(listOf())
     val taskStatusOptions by remember {
         derivedStateOf {
-            taskStatus.map { it.name }
+            viewModel.taskStatus.map { it.name }
         }
     }
-    val selectedStatusIndex = remember(taskStatus, task) {
+    val selectedStatusIndex = remember(viewModel.taskStatus, task) {
         task?.let { t ->
-            taskStatus.indexOfFirst { it.id == t.statusId }.takeIf { it > -1 }
+            viewModel.taskStatus.indexOfFirst { it.id == t.statusId }.takeIf { it > -1 }
         }
     }
 
@@ -66,7 +65,7 @@ internal fun ViewTask(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.setId(taskId)
+        viewModel.populateData(taskId)
     }
 
     LaunchedEffect(viewModel.statusChanged) {
@@ -126,7 +125,7 @@ internal fun ViewTask(
                     items = taskStatusOptions,
                     selectedIndex = selectedStatusIndex,
                     onClick = {
-                        viewModel.updateStatus(taskStatus[it], task)
+                        viewModel.updateStatus(viewModel.taskStatus[it], task)
                     }
                 )
                 task.description?.let { description ->

@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -51,12 +52,15 @@ internal fun Home(
     modifier: Modifier = Modifier
 ) {
     val viewModel = viewModel<HomeViewModel>()
-    val status by viewModel.taskStatus.collectAsStateWithLifecycle(listOf())
     val tasks by viewModel.tasks.collectAsStateWithLifecycle(listOf())
     val selectedStatus by viewModel.selectedTaskStatus.collectAsStateWithLifecycle()
 
-    val showStatusInList by remember(status, selectedStatus) {
-        derivedStateOf { selectedStatus.size == status.size }
+    val showStatusInList by remember(viewModel.taskStatus, selectedStatus) {
+        derivedStateOf { selectedStatus.size == viewModel.taskStatus.size }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchTaskStatus()
     }
 
     Scaffold(
@@ -86,7 +90,7 @@ internal fun Home(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                status.forEach {
+                viewModel.taskStatus.forEach {
                     val selected = remember(it, selectedStatus) { it in selectedStatus }
 
                     FilterChip(

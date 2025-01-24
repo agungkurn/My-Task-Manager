@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditTaskViewModel @Inject constructor(
-    getAllTaskStatusUseCase: GetAllTaskStatus,
+    private val getAllTaskStatusUseCase: GetAllTaskStatus,
     private val updateTaskUseCase: UpdateTask,
     private val getTaskByIdUseCase: GetTaskById
 ) : BaseViewModel() {
@@ -26,15 +26,17 @@ class EditTaskViewModel @Inject constructor(
         private set
     var saved by mutableStateOf(false)
 
-    val taskStatus = getAllTaskStatusUseCase.data
+    var taskStatus by mutableStateOf(listOf<TaskStatusEntity>())
+        private set
 
     fun prefill(taskId: Int) {
         loadOnBackground {
+            taskStatus = getAllTaskStatusUseCase()
             existingData = getTaskByIdUseCase.asOneShot(taskId)
-            existingData?.let {
-                title = it.title
-                description = it.description.orEmpty()
-                selectedStatus = TaskStatusEntity(it.statusId, it.statusName)
+            existingData?.let { details ->
+                title = details.title
+                description = details.description.orEmpty()
+                selectedStatus = taskStatus.firstOrNull { it.id == details.statusId }
             }
         }
 

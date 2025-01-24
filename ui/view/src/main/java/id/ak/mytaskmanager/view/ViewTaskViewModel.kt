@@ -19,10 +19,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewTaskViewModel @Inject constructor(
-    getAllTaskStatusUseCase: GetAllTaskStatus,
+    private val getAllTaskStatusUseCase: GetAllTaskStatus,
     private val getTaskByIdUseCase: GetTaskById,
     private val updateTaskUseCase: UpdateTask,
-    private val deleteTask: DeleteTask
+    private val deleteTaskUseCase: DeleteTask
 ) : BaseViewModel() {
     val taskId: StateFlow<Int?>
         field = MutableStateFlow<Int?>(null)
@@ -33,13 +33,18 @@ class ViewTaskViewModel @Inject constructor(
         } ?: flowOf(null)
     }
 
-    val statusOptions = getAllTaskStatusUseCase.data
+    var taskStatus by mutableStateOf(listOf<TaskStatusEntity>())
+        private set
 
     var statusChanged by mutableStateOf(false)
     var deleted by mutableStateOf(false)
 
-    fun setId(taskId: Int) {
+    fun populateData(taskId: Int) {
         this.taskId.value = taskId
+
+        loadOnBackground {
+            taskStatus = getAllTaskStatusUseCase()
+        }
     }
 
     fun updateStatus(taskStatusEntity: TaskStatusEntity, existingData: TaskDetailsEntity) {
@@ -58,7 +63,7 @@ class ViewTaskViewModel @Inject constructor(
     fun delete() {
         loadOnBackground {
             taskId.value?.let {
-                deleteTask(it)
+                deleteTaskUseCase(it)
                 deleted = true
             }
         }

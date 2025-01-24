@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.ak.mytaskmanager.ui_common.composable.ConfirmChangesDialog
 import id.ak.mytaskmanager.ui_common.composable.TaskStatusDropdown
@@ -47,14 +46,13 @@ internal fun EditTask(
     modifier: Modifier = Modifier
 ) {
     val viewModel = viewModel<EditTaskViewModel>()
-    val taskStatus by viewModel.taskStatus.collectAsStateWithLifecycle(listOf())
     val taskStatusOptions by remember {
         derivedStateOf {
-            taskStatus.map { it.name }
+            viewModel.taskStatus.map { it.name }
         }
     }
-    val selectedStatusIndex = remember(taskStatus, viewModel.selectedStatus) {
-        taskStatus.indexOf(viewModel.selectedStatus).takeIf { it > -1 }
+    val selectedStatusIndex = remember(viewModel.taskStatus, viewModel.selectedStatus) {
+        viewModel.taskStatus.indexOf(viewModel.selectedStatus).takeIf { it > -1 }
     }
 
     val hasUnsavedChanges by remember {
@@ -119,7 +117,7 @@ internal fun EditTask(
                 items = taskStatusOptions,
                 selectedIndex = selectedStatusIndex,
                 onClick = {
-                    viewModel.selectedStatus = taskStatus[it]
+                    viewModel.selectedStatus = viewModel.taskStatus[it]
                 }
             )
             OutlinedTextField(

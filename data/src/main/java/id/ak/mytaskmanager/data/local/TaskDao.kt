@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM TaskStatus")
-    fun getAllStatus(): Flow<List<TaskStatus>>
+    suspend fun getAllStatus(): List<TaskStatus>
 
     @Query(
         "SELECT t.id, t.title, t.description, t.createdAt, t.updatedAt, t.statusId, s.name AS statusName " +
