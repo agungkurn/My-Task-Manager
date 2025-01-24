@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -128,6 +129,7 @@ fun TaskItem(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = taskEntity.title,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 2,
@@ -135,6 +137,7 @@ fun TaskItem(
             )
             taskEntity.description?.let {
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,

@@ -22,7 +22,7 @@ class EditTaskActivity : ComponentActivity() {
                 taskId?.let { id ->
                     EditTask(
                         taskId = id,
-                        onSaved = { finish() },
+                        close = { finish() },
                         onNavigateUp = { onBackPressedDispatcher.onBackPressed() }
                     )
                 }

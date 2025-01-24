@@ -1,25 +1,19 @@
 package id.ak.mytaskmanager.edit
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -27,14 +21,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -42,19 +35,39 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import id.ak.mytaskmanager.ui_common.composable.ConfirmChangesDialog
+import id.ak.mytaskmanager.ui_common.composable.TaskStatusDropdown
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditTask(
     taskId: Int,
-    onSaved: () -> Unit,
+    close: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel = viewModel<EditTaskViewModel>()
     val taskStatus by viewModel.taskStatus.collectAsStateWithLifecycle(listOf())
+    val taskStatusOptions by remember {
+        derivedStateOf {
+            taskStatus.map { it.name }
+        }
+    }
+    val selectedStatusIndex = remember(taskStatus, viewModel.selectedStatus) {
+        taskStatus.indexOf(viewModel.selectedStatus).takeIf { it > -1 }
+    }
 
-    var showStatusOptions by remember { mutableStateOf(false) }
+    val hasUnsavedChanges by remember {
+        derivedStateOf {
+            with(viewModel) {
+                existingData?.let {
+                    title != it.title || selectedStatus?.id != it.statusId
+                            || description != it.description
+                } == true
+            }
+        }
+    }
+    var showUnsavedChangesDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.prefill(taskId)
@@ -62,8 +75,12 @@ internal fun EditTask(
 
     LaunchedEffect(viewModel.saved) {
         if (viewModel.saved) {
-            onSaved()
+            close()
         }
+    }
+
+    BackHandler(enabled = hasUnsavedChanges) {
+        showUnsavedChangesDialog = true
     }
 
     Scaffold(
@@ -81,7 +98,7 @@ internal fun EditTask(
             )
         },
         floatingActionButton = {
-            if (viewModel.title.isNotEmpty() && viewModel.selectedStatus != null) {
+            if (viewModel.title.isNotBlank() && viewModel.selectedStatus != null) {
                 FloatingActionButton(onClick = viewModel::save) {
                     Icon(Icons.Default.Check, contentDescription = "done")
                 }
@@ -97,42 +114,14 @@ internal fun EditTask(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.TopEnd)
-            ) {
-                TextButton(onClick = { showStatusOptions = true }) {
-                    Text(text = viewModel.selectedStatus?.name.orEmpty())
-                    Spacer(Modifier.width(8.dp))
-                    Icon(
-                        Icons.Default.ArrowDropDown,
-                        contentDescription = "change status"
-                    )
+            TaskStatusDropdown(
+                text = viewModel.selectedStatus?.name.orEmpty(),
+                items = taskStatusOptions,
+                selectedIndex = selectedStatusIndex,
+                onClick = {
+                    viewModel.selectedStatus = taskStatus[it]
                 }
-                DropdownMenu(
-                    expanded = showStatusOptions,
-                    onDismissRequest = { showStatusOptions = false }
-                ) {
-                    taskStatus.forEach {
-                        DropdownMenuItem(
-                            text = { Text(text = it.name) },
-                            onClick = {
-                                viewModel.selectedStatus = it
-                                showStatusOptions = false
-                            },
-                            trailingIcon = {
-                                if (viewModel.selectedStatus == it) {
-                                    Icon(
-                                        Icons.Default.Check,
-                                        contentDescription = "selected: ${it.name}"
-                                    )
-                                }
-                            }
-                        )
-                    }
-                }
-            }
+            )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = viewModel.title,
@@ -152,6 +141,21 @@ internal fun EditTask(
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
                 )
+            )
+        }
+
+        if (showUnsavedChangesDialog) {
+            ConfirmChangesDialog(
+                onDismiss = { showUnsavedChangesDialog = false },
+                onConfirm = {
+                    viewModel.save()
+                    showUnsavedChangesDialog = false
+                    close()
+                },
+                onDeny = {
+                    showUnsavedChangesDialog = false
+                    close()
+                }
             )
         }
     }

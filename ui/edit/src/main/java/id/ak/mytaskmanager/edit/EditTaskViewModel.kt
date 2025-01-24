@@ -21,16 +21,17 @@ class EditTaskViewModel @Inject constructor(
     var title by mutableStateOf("")
     var description by mutableStateOf("")
     var selectedStatus by mutableStateOf<TaskStatusEntity?>(null)
+
+    var existingData by mutableStateOf<TaskDetailsEntity?>(null)
+        private set
     var saved by mutableStateOf(false)
 
     val taskStatus = getAllTaskStatusUseCase.data
 
-    private var taskDetails: TaskDetailsEntity? = null
-
     fun prefill(taskId: Int) {
         loadOnBackground {
-            taskDetails = getTaskByIdUseCase.asOneShot(taskId)
-            taskDetails?.let {
+            existingData = getTaskByIdUseCase.asOneShot(taskId)
+            existingData?.let {
                 title = it.title
                 description = it.description.orEmpty()
                 selectedStatus = TaskStatusEntity(it.statusId, it.statusName)
@@ -41,7 +42,7 @@ class EditTaskViewModel @Inject constructor(
 
     fun save() {
         loadOnBackground {
-            taskDetails?.let {
+            existingData?.let {
                 updateTaskUseCase(it.id, title, description, selectedStatus?.id ?: 1)
                 saved = true
             }

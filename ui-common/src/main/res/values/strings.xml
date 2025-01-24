@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
+    <string name="confirm_changes">Save changes?</string>
+</resources>

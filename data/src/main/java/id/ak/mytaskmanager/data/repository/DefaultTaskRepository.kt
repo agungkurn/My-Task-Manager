@@ -54,7 +54,7 @@ class DefaultTaskRepository @Inject constructor(
         taskDao.createTask(
             Task(
                 title = title,
-                description = description,
+                description = description.takeIf { !it.isNullOrBlank() },
                 statusId = statusId,
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis()
@@ -71,7 +71,7 @@ class DefaultTaskRepository @Inject constructor(
         taskDao.updateTask(
             id = id,
             title = title,
-            description = description,
+            description = description.takeIf { !it.isNullOrBlank() },
             statusId = statusId,
             updatedAt = System.currentTimeMillis()
         )

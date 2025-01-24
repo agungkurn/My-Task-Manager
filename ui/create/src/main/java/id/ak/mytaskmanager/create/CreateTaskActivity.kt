@@ -15,7 +15,7 @@ class CreateTaskActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 CreateTask(
-                    onSaved = { finish() },
+                    close = { finish() },
                     onNavigateUp = { onBackPressedDispatcher.onBackPressed() }
                 )
             }

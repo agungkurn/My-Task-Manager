@@ -112,7 +112,7 @@ internal fun ViewTask(
                         viewModel.updateStatus(taskStatus[it], task)
                     }
                 )
-                task.description.takeIf { !it.isNullOrBlank() }?.let { description ->
+                task.description?.let { description ->
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
                         text = stringResource(R.string.view_description),
