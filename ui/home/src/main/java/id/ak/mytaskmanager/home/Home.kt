@@ -92,7 +92,8 @@ internal fun Home(
                 }
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     if (tasks.isNotEmpty()) {
                         items(tasks) { task ->

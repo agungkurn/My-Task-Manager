@@ -3,4 +3,5 @@
     <string name="view_status">Status</string>
     <string name="view_description">Description</string>
     <string name="view_modified">Last modified: %1$s</string>
+    <string name="view_status_changed">Status changed</string>
 </resources>

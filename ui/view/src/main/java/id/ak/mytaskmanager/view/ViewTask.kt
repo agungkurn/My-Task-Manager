@@ -14,9 +14,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -25,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.ak.mytaskmanager.common.extension.formatAsLocalizedString
+import id.ak.mytaskmanager.ui_common.composable.TaskStatusDropdown
+import id.ak.mytaskmanager.ui_common.state.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,11 +40,32 @@ internal fun ViewTask(
     modifier: Modifier = Modifier
 ) {
     val viewModel = viewModel<ViewTaskViewModel>()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val task by viewModel.task.collectAsStateWithLifecycle(null)
-    val status by viewModel.status.collectAsStateWithLifecycle(null)
+    val taskStatus by viewModel.statusOptions.collectAsStateWithLifecycle(listOf())
+    val taskStatusOptions by remember {
+        derivedStateOf {
+            taskStatus.map { it.name }
+        }
+    }
+    val selectedStatusIndex = remember(taskStatus, task) {
+        task?.let { t ->
+            taskStatus.indexOfFirst { it.id == t.statusId }.takeIf { it > -1 }
+        }
+    }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarMessage = stringResource(R.string.view_status_changed)
 
     LaunchedEffect(Unit) {
         viewModel.setId(taskId)
+    }
+
+    LaunchedEffect(viewModel.statusChanged) {
+        if (viewModel.statusChanged) {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message = snackbarMessage)
+        }
     }
 
     Scaffold(
@@ -62,7 +88,8 @@ internal fun ViewTask(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { scaffoldPadding ->
         task?.let { task ->
             val lastUpdate = remember(task) {
@@ -76,13 +103,15 @@ internal fun ViewTask(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                status?.let { status ->
-                    Text(
-                        text = stringResource(R.string.view_status),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Text(text = status.name, style = MaterialTheme.typography.bodyMedium)
-                }
+                TaskStatusDropdown(
+                    enabled = uiState == UiState.NotLoading,
+                    text = task.statusName,
+                    items = taskStatusOptions,
+                    selectedIndex = selectedStatusIndex,
+                    onClick = {
+                        viewModel.updateStatus(taskStatus[it], task)
+                    }
+                )
                 task.description.takeIf { !it.isNullOrBlank() }?.let { description ->
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
