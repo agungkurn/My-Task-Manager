@@ -1,4 +1,4 @@
-package id.ak.mytaskmanager.create
+package id.ak.mytaskmanager.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,15 +45,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun CreateTask(
+internal fun EditTask(
+    taskId: Int,
     onSaved: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel = viewModel<CreateTaskViewModel>()
+    val viewModel = viewModel<EditTaskViewModel>()
     val taskStatus by viewModel.taskStatus.collectAsStateWithLifecycle(listOf())
 
     var showStatusOptions by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.prefill(taskId)
+    }
 
     LaunchedEffect(viewModel.saved) {
         if (viewModel.saved) {
@@ -66,7 +71,7 @@ internal fun CreateTask(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.create_title))
+                    Text(text = stringResource(R.string.edit_title))
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
@@ -98,14 +103,11 @@ internal fun CreateTask(
                     .wrapContentSize(Alignment.TopEnd)
             ) {
                 TextButton(onClick = { showStatusOptions = true }) {
-                    Text(
-                        text = viewModel.selectedStatus?.name
-                            ?: stringResource(R.string.title_status_placeholder)
-                    )
+                    Text(text = viewModel.selectedStatus?.name.orEmpty())
                     Spacer(Modifier.width(8.dp))
                     Icon(
                         Icons.Default.ArrowDropDown,
-                        contentDescription = stringResource(R.string.title_status_placeholder)
+                        contentDescription = "change status"
                     )
                 }
                 DropdownMenu(

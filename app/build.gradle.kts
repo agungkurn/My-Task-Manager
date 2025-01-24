@@ -56,6 +56,7 @@ dependencies {
     implementation(projects.ui.home)
     implementation(projects.ui.create)
     implementation(projects.ui.view)
+    implementation(projects.ui.edit)
 
     implementation(libs.androidx.multidex)
 

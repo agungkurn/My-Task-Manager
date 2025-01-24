@@ -6,6 +6,7 @@ import android.content.Intent
 interface IntentFactory {
     fun createTask(context: Context): Intent
     fun viewTask(context: Context, taskId: Int): Intent
+    fun editTask(context: Context, taskId: Int): Intent
 
     object Extras {
         const val TASK_ID = "extra:task-id"

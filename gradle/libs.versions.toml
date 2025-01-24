@@ -15,6 +15,8 @@ coil = "3.0.4"
 room = "2.6.1"
 ksp = "2.1.0-1.0.29"
 javax = "1"
+appcompat = "1.7.0"
+material = "1.12.0"
 
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
@@ -48,6 +50,8 @@ coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil"
 room = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 ksp-plugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [bundles]
 coil = ["coil-compose", "coil-gif", "coil-okhttp"]
@@ -61,3 +65,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-library = { id = "kotlin-library" }
 ui-library = { id = "ui-library" }
 common-android-library = { id = "common-android-library" }
+android-library = { id = "com.android.library", version.ref = "agp" }

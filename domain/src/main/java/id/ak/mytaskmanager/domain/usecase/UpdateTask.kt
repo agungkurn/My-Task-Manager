@@ -1,12 +1,20 @@
 package id.ak.mytaskmanager.domain.usecase
 
-import id.ak.mytaskmanager.domain.entity.TaskEntity
-import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
 import id.ak.mytaskmanager.domain.repository.TaskRepository
 import javax.inject.Inject
 
 class UpdateTask @Inject constructor(private val repository: TaskRepository) {
-    suspend operator fun invoke(taskEntity: TaskEntity) {
-        repository.updateTask(taskEntity)
+    suspend operator fun invoke(
+        id: Int,
+        title: String,
+        description: String?,
+        statusId: Int
+    ) {
+        repository.updateTask(
+            id = id,
+            title = title,
+            description = description,
+            statusId = statusId
+        )
     }
 }

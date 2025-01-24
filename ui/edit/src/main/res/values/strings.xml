@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_title">Edit Task</string>
+    <string name="create_title_label">Title</string>
+    <string name="create_description_label">Description (optional)</string>
+</resources>

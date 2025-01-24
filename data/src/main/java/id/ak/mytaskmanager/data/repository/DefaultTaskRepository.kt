@@ -2,10 +2,12 @@ package id.ak.mytaskmanager.data.repository
 
 import id.ak.mytaskmanager.data.local.TaskDao
 import id.ak.mytaskmanager.data.room_entity.Task
+import id.ak.mytaskmanager.data.room_entity.TaskDetailsDtoToEntityMapper
 import id.ak.mytaskmanager.data.room_entity.TaskDtoToEntityMapper
 import id.ak.mytaskmanager.data.room_entity.TaskEntityToDtoMapper
 import id.ak.mytaskmanager.data.room_entity.TaskStatus
 import id.ak.mytaskmanager.data.room_entity.TaskStatusDtoToEntityMapper
+import id.ak.mytaskmanager.domain.entity.TaskDetailsEntity
 import id.ak.mytaskmanager.domain.entity.TaskEntity
 import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
 import id.ak.mytaskmanager.domain.repository.TaskRepository
@@ -17,7 +19,8 @@ class DefaultTaskRepository @Inject constructor(
     private val taskDao: TaskDao,
     private val taskDtoToEntityMapper: TaskDtoToEntityMapper,
     private val taskStatusDtoToEntityMapper: TaskStatusDtoToEntityMapper,
-    private val taskEntityToDtoMapper: TaskEntityToDtoMapper
+    private val taskEntityToDtoMapper: TaskEntityToDtoMapper,
+    private val taskDetailsDtoToEntityMapper: TaskDetailsDtoToEntityMapper
 ) : TaskRepository {
     override val pendingTasks = taskDao.getAllTasks(statusId = 1)
         .map<List<Task>, List<TaskEntity>>(taskDtoToEntityMapper::map)
@@ -35,9 +38,15 @@ class DefaultTaskRepository @Inject constructor(
             }
         }
 
-    override fun getTaskById(id: Int): Flow<TaskEntity> {
-        return taskDao.getTaskById(id).map {
-            taskDtoToEntityMapper.map(it)
+    override fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity> {
+        return taskDao.getTaskByIdFlow(id).map {
+            taskDetailsDtoToEntityMapper.map(it)
+        }
+    }
+
+    override suspend fun getTaskById(id: Int): TaskDetailsEntity {
+        return taskDao.getTaskById(id).let {
+            taskDetailsDtoToEntityMapper.map(it)
         }
     }
 
@@ -53,9 +62,19 @@ class DefaultTaskRepository @Inject constructor(
         )
     }
 
-    override suspend fun updateTask(taskEntity: TaskEntity) {
-        val converted = taskEntityToDtoMapper.map(taskEntity)
-        taskDao.updateTask(converted)
+    override suspend fun updateTask(
+        id: Int,
+        title: String,
+        description: String?,
+        statusId: Int
+    ) {
+        taskDao.updateTask(
+            id = id,
+            title = title,
+            description = description,
+            statusId = statusId,
+            updatedAt = System.currentTimeMillis()
+        )
     }
 
     override suspend fun deleteTask(taskEntity: TaskEntity) {
