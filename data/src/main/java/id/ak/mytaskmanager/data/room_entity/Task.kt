@@ -29,17 +29,3 @@ class TaskDtoToEntityMapper @Inject constructor() : Mapper<Task, TaskEntity>() {
         )
     }
 }
-
-class TaskEntityToDtoMapper @Inject constructor() : Mapper<TaskEntity, Task>() {
-    override fun map(from: TaskEntity): Task {
-        return Task(
-            id = from.id,
-            title = from.title,
-            description = from.description,
-            statusId = from.statusId,
-            createdAt = from.createdAt,
-            updatedAt = from.updatedAt
-        )
-    }
-
-}

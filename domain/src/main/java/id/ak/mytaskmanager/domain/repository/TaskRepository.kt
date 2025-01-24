@@ -10,8 +10,8 @@ interface TaskRepository {
     val pendingTasks: Flow<List<TaskEntity>>
     val completedTasks: Flow<List<TaskEntity>>
 
-    fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity>
-    suspend fun getTaskById(id: Int): TaskDetailsEntity
+    fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity?>
+    suspend fun getTaskById(id: Int): TaskDetailsEntity?
     suspend fun createTask(title: String, description: String?, statusId: Int)
     suspend fun updateTask(
         id: Int,
@@ -20,5 +20,5 @@ interface TaskRepository {
         statusId: Int
     )
 
-    suspend fun deleteTask(taskEntity: TaskEntity)
+    suspend fun deleteTask(taskId: Int)
 }

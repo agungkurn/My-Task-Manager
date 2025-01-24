@@ -1,7 +1,6 @@
 package id.ak.mytaskmanager.data.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import id.ak.mytaskmanager.data.room_entity.Task
@@ -54,6 +53,6 @@ interface TaskDao {
         updatedAt: Long
     )
 
-    @Delete
-    suspend fun deleteTask(task: Task)
+    @Query("DELETE FROM Task WHERE id = :taskId")
+    suspend fun deleteTask(taskId: Int)
 }

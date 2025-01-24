@@ -4,7 +4,6 @@ import id.ak.mytaskmanager.data.local.TaskDao
 import id.ak.mytaskmanager.data.room_entity.Task
 import id.ak.mytaskmanager.data.room_entity.TaskDetailsDtoToEntityMapper
 import id.ak.mytaskmanager.data.room_entity.TaskDtoToEntityMapper
-import id.ak.mytaskmanager.data.room_entity.TaskEntityToDtoMapper
 import id.ak.mytaskmanager.data.room_entity.TaskStatus
 import id.ak.mytaskmanager.data.room_entity.TaskStatusDtoToEntityMapper
 import id.ak.mytaskmanager.domain.entity.TaskDetailsEntity
@@ -19,7 +18,6 @@ class DefaultTaskRepository @Inject constructor(
     private val taskDao: TaskDao,
     private val taskDtoToEntityMapper: TaskDtoToEntityMapper,
     private val taskStatusDtoToEntityMapper: TaskStatusDtoToEntityMapper,
-    private val taskEntityToDtoMapper: TaskEntityToDtoMapper,
     private val taskDetailsDtoToEntityMapper: TaskDetailsDtoToEntityMapper
 ) : TaskRepository {
     override val pendingTasks = taskDao.getAllTasks(statusId = 1)
@@ -38,13 +36,13 @@ class DefaultTaskRepository @Inject constructor(
             }
         }
 
-    override fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity> {
+    override fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity?> {
         return taskDao.getTaskByIdFlow(id).map {
             taskDetailsDtoToEntityMapper.map(it)
         }
     }
 
-    override suspend fun getTaskById(id: Int): TaskDetailsEntity {
+    override suspend fun getTaskById(id: Int): TaskDetailsEntity? {
         return taskDao.getTaskById(id).let {
             taskDetailsDtoToEntityMapper.map(it)
         }
@@ -77,8 +75,7 @@ class DefaultTaskRepository @Inject constructor(
         )
     }
 
-    override suspend fun deleteTask(taskEntity: TaskEntity) {
-        val converted = taskEntityToDtoMapper.map(taskEntity)
-        taskDao.deleteTask(converted)
+    override suspend fun deleteTask(taskId: Int) {
+        taskDao.deleteTask(taskId)
     }
 }

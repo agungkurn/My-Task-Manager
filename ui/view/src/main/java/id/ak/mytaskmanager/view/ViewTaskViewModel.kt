@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import id.ak.mytaskmanager.domain.entity.TaskDetailsEntity
 import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
+import id.ak.mytaskmanager.domain.usecase.DeleteTask
 import id.ak.mytaskmanager.domain.usecase.GetAllTaskStatus
 import id.ak.mytaskmanager.domain.usecase.GetTaskById
 import id.ak.mytaskmanager.domain.usecase.UpdateTask
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class ViewTaskViewModel @Inject constructor(
     getAllTaskStatusUseCase: GetAllTaskStatus,
     private val getTaskByIdUseCase: GetTaskById,
-    private val updateTaskUseCase: UpdateTask
+    private val updateTaskUseCase: UpdateTask,
+    private val deleteTask: DeleteTask
 ) : BaseViewModel() {
     val taskId: StateFlow<Int?>
         field = MutableStateFlow<Int?>(null)
@@ -34,6 +36,7 @@ class ViewTaskViewModel @Inject constructor(
     val statusOptions = getAllTaskStatusUseCase.data
 
     var statusChanged by mutableStateOf(false)
+    var deleted by mutableStateOf(false)
 
     fun setId(taskId: Int) {
         this.taskId.value = taskId
@@ -49,6 +52,15 @@ class ViewTaskViewModel @Inject constructor(
                 statusId = taskStatusEntity.id
             )
             statusChanged = true
+        }
+    }
+
+    fun delete() {
+        loadOnBackground {
+            taskId.value?.let {
+                deleteTask(it)
+                deleted = true
+            }
         }
     }
 }

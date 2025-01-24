@@ -31,7 +31,8 @@ class ViewTaskActivity : ComponentActivity() {
                             intentFactory.editTask(this, id).also {
                                 startActivity(it)
                             }
-                        }
+                        },
+                        close = { finish() }
                     )
                 }
             }

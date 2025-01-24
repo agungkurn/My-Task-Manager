@@ -7,7 +7,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -17,11 +19,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -35,6 +40,7 @@ import id.ak.mytaskmanager.ui_common.state.UiState
 @Composable
 internal fun ViewTask(
     taskId: Int,
+    close: () -> Unit,
     onNavigateUp: () -> Unit,
     onEdit: () -> Unit,
     modifier: Modifier = Modifier
@@ -57,6 +63,8 @@ internal fun ViewTask(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarMessage = stringResource(R.string.view_status_changed)
 
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         viewModel.setId(taskId)
     }
@@ -65,6 +73,12 @@ internal fun ViewTask(
         if (viewModel.statusChanged) {
             snackbarHostState.currentSnackbarData?.dismiss()
             snackbarHostState.showSnackbar(message = snackbarMessage)
+        }
+    }
+
+    LaunchedEffect(viewModel.deleted) {
+        if (viewModel.deleted) {
+            close()
         }
     }
 
@@ -85,6 +99,9 @@ internal fun ViewTask(
                 actions = {
                     IconButton(onClick = onEdit) {
                         Icon(Icons.Default.Edit, contentDescription = "edit")
+                    }
+                    IconButton(onClick = { showDeleteDialog = true }) {
+                        Icon(Icons.Default.Delete, contentDescription = "delete")
                     }
                 }
             )
@@ -126,6 +143,30 @@ internal fun ViewTask(
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+        }
+
+        if (showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.delete()
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text(text = stringResource(id.ak.mytaskmanager.ui_common.R.string.action_yes))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text(text = stringResource(id.ak.mytaskmanager.ui_common.R.string.action_no))
+                    }
+                },
+                text = {
+                    Text(text = "Delete task ${task?.title}?")
+                }
+            )
         }
     }
 }

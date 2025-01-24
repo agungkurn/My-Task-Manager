@@ -17,16 +17,18 @@ data class TaskDetails(
 )
 
 class TaskDetailsDtoToEntityMapper @Inject constructor() :
-    Mapper<TaskDetails, TaskDetailsEntity>() {
-    override fun map(from: TaskDetails): TaskDetailsEntity {
-        return TaskDetailsEntity(
-            id = from.id,
-            title = from.title,
-            description = from.description,
-            statusId = from.statusId,
-            createdAt = from.createdAt,
-            updatedAt = from.updatedAt,
-            statusName = from.statusName
-        )
+    Mapper<TaskDetails?, TaskDetailsEntity?>() {
+    override fun map(from: TaskDetails?): TaskDetailsEntity? {
+        return from?.let {
+            TaskDetailsEntity(
+                id = it.id,
+                title = it.title,
+                description = it.description,
+                statusId = it.statusId,
+                createdAt = it.createdAt,
+                updatedAt = it.updatedAt,
+                statusName = it.statusName
+            )
+        }
     }
 }
