@@ -3,11 +3,9 @@ package id.ak.mytaskmanager.data.repository
 import id.ak.mytaskmanager.data.local.TaskDao
 import id.ak.mytaskmanager.data.room_entity.Task
 import id.ak.mytaskmanager.data.room_entity.TaskDetailsDtoToEntityMapper
-import id.ak.mytaskmanager.data.room_entity.TaskDtoToEntityMapper
 import id.ak.mytaskmanager.data.room_entity.TaskStatus
 import id.ak.mytaskmanager.data.room_entity.TaskStatusDtoToEntityMapper
 import id.ak.mytaskmanager.domain.entity.TaskDetailsEntity
-import id.ak.mytaskmanager.domain.entity.TaskEntity
 import id.ak.mytaskmanager.domain.entity.TaskStatusEntity
 import id.ak.mytaskmanager.domain.repository.TaskRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,16 +14,9 @@ import javax.inject.Inject
 
 class DefaultTaskRepository @Inject constructor(
     private val taskDao: TaskDao,
-    private val taskDtoToEntityMapper: TaskDtoToEntityMapper,
     private val taskStatusDtoToEntityMapper: TaskStatusDtoToEntityMapper,
     private val taskDetailsDtoToEntityMapper: TaskDetailsDtoToEntityMapper
 ) : TaskRepository {
-    override val pendingTasks = taskDao.getAllTasks(statusId = 1)
-        .map<List<Task>, List<TaskEntity>>(taskDtoToEntityMapper::map)
-
-    override val completedTasks = taskDao.getAllTasks(statusId = 2)
-        .map<List<Task>, List<TaskEntity>>(taskDtoToEntityMapper::map)
-
     override val status = taskDao.getAllStatus()
         .map<List<TaskStatus>, List<TaskStatusEntity>> {
             if (it.isNotEmpty()) {
@@ -35,6 +26,12 @@ class DefaultTaskRepository @Inject constructor(
                 listOf()
             }
         }
+
+    override fun getTasks(statusId: List<Int>): Flow<List<TaskDetailsEntity>> {
+        return taskDao.getAllTasks(statusId).map {
+            taskDetailsDtoToEntityMapper.map(it).filterNotNull()
+        }
+    }
 
     override fun getTaskByIdFlow(id: Int): Flow<TaskDetailsEntity?> {
         return taskDao.getTaskByIdFlow(id).map {

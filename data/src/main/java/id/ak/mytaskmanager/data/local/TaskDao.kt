@@ -13,8 +13,14 @@ interface TaskDao {
     @Query("SELECT * FROM TaskStatus")
     fun getAllStatus(): Flow<List<TaskStatus>>
 
-    @Query("SELECT * FROM Task WHERE statusId = :statusId")
-    fun getAllTasks(statusId: Int): Flow<List<Task>>
+    @Query(
+        "SELECT t.id, t.title, t.description, t.createdAt, t.updatedAt, t.statusId, s.name AS statusName " +
+                "FROM Task AS t " +
+                "INNER JOIN TaskStatus AS s " +
+                "ON t.statusId = s.id " +
+                "WHERE t.statusId IN (:statusIds)"
+    )
+    fun getAllTasks(statusIds: List<Int>): Flow<List<TaskDetails>>
 
     @Query(
         "SELECT t.id, t.title, t.description, t.createdAt, t.updatedAt, t.statusId, s.name AS statusName " +
